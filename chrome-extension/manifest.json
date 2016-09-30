@@ -1,0 +1,35 @@
+{
+    "manifest_version": 2,
+    "name": "DevProgress leaderboard",
+    "version": "0.1",
+    "description": "Logs calling activities to DevProgress",
+    "icons": {
+        "128": "dev_progress128.png"
+    },
+    "background": {
+        "persistent": false,
+        "scripts": [
+            "bg.js"
+        ]
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://www.votebuilder.com/MyListVirtualPhoneBank.aspx",
+                "https://www.votebuilder.com/ContactDetailScript.aspx",
+                "http://localhost:8000/*"
+            ],
+            "js": ["jquery-1.12.4.min.js", "votebuilder.js"]
+        }
+    ],
+    "permissions": [
+        "http://localhost:8000/*",
+        "https://www.votebuilder.com/MyListVirtualPhoneBank.aspx",
+        "https://www.votebuilder.com/ContactDetailScript.aspx"
+    ],
+    "browser_action": {
+        "default_title": "",
+        "default_icon": "dev_progress19.png",
+        "default_popup": "popup.html"
+    }
+}

@@ -4,6 +4,18 @@ Call-tool leaderboards! For phone bankers to compete with each other.
 
 ## setup
 
+### load local version of extension
+
+In Chrome, go to chrome://extensions
+
+Make sure Developer mode checkbox is checked
+
+Click Load unpacked extensions
+
+Select the chrome-extension directory under this one
+
+### pages
+
 Get static copies of pages from #proj-leader-board---t and unzip into `pages` directory
 
 Run `python -m SimpleHTTPServer`
@@ -20,6 +32,13 @@ username `#action-bar-dropdown-van-name`
 committee name `#action-bar-dropdown-van-committee`
 
     angular.module('van.context', []).value('contextValueService', {"clientID":"DNC","culture":{"currentCulture":"","defaultCulture":"","defaultSystemCulture":"en-US"},"state":{"id":"DNCCA","clientID":"DNC","name":"VoteBuilder California","shortName":"California"},"committee":{"id":"EID449DN","name":"2016 California Coordinated Campaign","shortName":"16 CA Coordinated Campaign"},"user":{"id":1252386,"firstName":"jane","lastName":"caller","email":"caller@test.com","isUsingNewSupportRequests":false},"currentTabName":"My Campaign","linkedTabName":"My Voters","dateFormat":"M/d/yyyy","jQueryDateFormat":"m/d/yy","pageSpecificContext":{},"dateTimeFormat":"M/d/yyyy h:mm a","timeZoneOffset":-420});
+
+clientID    DNC
+state.shortName    California
+committee.shortName 16 CA Coordinated Campaign
+
+user.firstName  jane
+user.lastName   caller
 
 
 ### phone bank select
