@@ -14,6 +14,13 @@ Click Load unpacked extensions
 
 Select the chrome-extension directory under this one
 
+Optional but useful: install [https://chrome.google.com/webstore/detail/keen-debugger/jaanimjmcilehhddhdalaplgkebjbmfj?hl=en](Keen Debugger extension)
+
+### developer setup
+
+    cd chrome-extension
+    bower install
+
 ### pages
 
 Get static copies of pages from #proj-leader-board---t and unzip into `pages` directory

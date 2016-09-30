@@ -1,10 +1,19 @@
-console.log('votebuilder.js');
+var url = document.location.href;
 
 // get user info
-var username = $('#action-bar-dropdown-username').text().trim();
-var committee = $('#action-bar-dropdown-van-committee');
+var user = $('#action-bar-dropdown-van-name').text().trim();
+var name = $('#action-bar-dropdown-username').text().trim();
 
-// find the script tag with van.context
+var ev = {
+    source: 'VoteBuilder',
+    user: {
+        username: user,
+        name: name
+    },
+    phonebank: {}
+};
+
+// get context info from the script tag that sets up Angular
 var ctx = null;
 $('script').each(function() {
     var text = $(this).text();
@@ -16,22 +25,105 @@ $('script').each(function() {
     ctx = JSON.parse(text.substring(start, end));
 });
 console.log('ctx=', ctx);
-/*
-clientID    DNC
-state.shortName    California
-committee.shortName 16 CA Coordinated Campaign
 
-user.firstName  jane
-user.lastName   caller
-*/
+if (ctx) {
+    ev.state = ctx.state.shortName;
+    ev.committee = {
+        id: ctx.committee.id,
+        name: ctx.committee.name
+    };
+}
 
-var skipButton = $('input[value="Skip"]')[0];
-var saveButton = $('input[value="Save - Next Household"]')[0];
+function getSurveyAnswers(table) {
+    var survey = {};
+    $('select').each(function() {
+        var val = $(this).val();
+        if (!val || val === '0') {
+            return;
+        }
+        var question;
+        if (table) {
+            question = $(this).closest('tr').find('td:eq(0)').text().trim();
+        } else {
+            question = $(this).parent().parent().find('label').text().trim();
+        }
+        var answer = $(this).find('option[value="'+val+'"]').text().trim();
+        if (answer) {
+            survey[question] = answer;
+        }
+    });
+    return survey;
+}
 
-skipButton.addEventListener('click', function() {
-    console.log('clicked skip');
-}, false);
+function getPhonebank() {
+    var pb = {};
+    var id = localStorage.getItem('phonebankId');
+    if (id) {
+        pb.id = id;
+    }
+    var name =localStorage.getItem('phonebankName');
+    if (name) {
+        pb.name = name;
+    }
+    return pb;
+}
 
-saveButton.addEventListener('click', function() {
-    console.log('clicked save');
-}, false);
+// save phonebank details to local storage and send checkin event on submit
+if (url.indexOf('VirtualPhoneBankRun') >= 0) {
+    ev.action = 'checkin';
+    var re = new RegExp('VirtualPhoneBankListID=(.*)');
+    var match = re.exec(url);
+    if (match && match.length > 1) {
+        ev.phonebank.id = match[1];
+        localStorage.setItem('phonebankId', ev.phonebank.id);
+    }
+    ev.phonebank.name = $('.panel-heading').text().trim();
+    localStorage.setItem('phonebankName', ev.phonebank.name);
+
+    var submitButton = $('input[type="submit"]')[0];
+    submitButton.addEventListener('click', function() {
+        console.log('send event', ev);
+        // keen.recordEvent('phonebank-leaderboard', ev);
+    });
+}
+
+// predictive dialer
+if (url.indexOf('AutoDialDisposition') >= 0) {
+    var submitButton = $('input[type="submit"]')[0];
+    ev.dialer = 'predictive';
+    ev.phonebank = getPhonebank();
+    submitButton.addEventListener('click', function() {
+        var noAnswer = $('#TDResults input:checked');
+        if (noAnswer.length) {
+            ev.action = 'no contact';
+            var answerId = $(noAnswer[0]).attr('id');
+            var label = $('label[for="'+answerId+'"]').text().trim();
+        } else {
+            ev.action = 'contact';
+            ev.survey = getSurveyAnswers(true);
+        }
+        console.log('send event', ev);
+        // keen.recordEvent('phonebank-leaderboard', ev);
+    });
+}
+
+// manual dialer
+if (url.indexOf('ContactDetailScript') >= 0) {
+    ev.dialer = 'manual';
+    ev.phonebank = getPhonebank();
+    var skipButton = $('input[value="Skip"]')[0];
+    var saveButton = $('input[value="Save - Next Household"]')[0];
+
+    skipButton.addEventListener('click', function() {
+        ev.action = 'no contact';
+        console.log('send event', ev);
+    }, false);
+
+    saveButton.addEventListener('click', function() {
+        ev.action = 'contact';
+        ev.survey = getSurveyAnswers(false);
+        console.log('send event', ev);
+        // keen.recordEvent('phonebank-leaderboard', ev);
+    }, false);
+}
+
