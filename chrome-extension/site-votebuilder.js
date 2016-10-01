@@ -1,6 +1,3 @@
-var page = new VoteBuilderPage(document.location.href);
-page.log();
-
 /*
     create votebuilder page:
     - set source to VoteBuilder
@@ -50,6 +47,38 @@ VoteBuilderPage.prototype.log = function() {
     if (this.url.indexOf('AutoDialDisposition') >= 0) {
         return this.predictiveCall();
     }
+    this.phonebankMapping();
+};
+
+/*
+    get phonebank id from query param: ActivateAutoDialID=36831
+*/
+VoteBuilderPage.prototype.autoDialId = function(url) {
+    var re = new RegExp('ActivateAutoDialID=(.*)');
+    var match = re.exec(url);
+    return (match && match.length > 1) ? match[1] : null;
+};
+
+/*
+    predictive auto dialer start page has the phonebank id, but not name
+    look for links to AutoDialLoad
+    save id-name mapping in localstorage
+*/
+VoteBuilderPage.prototype.phonebankMapping = function() {
+    // <a href="https://www.votebuilder.com/AutoDialLoad.aspx?ActivateAutoDialID=36831">CA2NV Recruit 10.1</a>
+    var self = this;
+    $('a').each(function() {
+        var href = $(this).attr('href');
+        if (!href || href.indexOf('AutoDialLoad') < 0) {
+            return;
+        }
+        // get id from URL
+        var id = self.autoDialId(href);
+        var text = $(this).text().trim();
+        if (id && text) {
+            localStorage.setItem('pb'+id, text);
+        }
+    });
 };
 
 /*
@@ -105,14 +134,16 @@ VoteBuilderPage.prototype.manualCall = function() {
 */
 VoteBuilderPage.prototype.predictiveCheckin = function() {
     this.ev.action = 'checkin';
-    console.log('need phonebank info');
-/*
-https://www.votebuilder.com/AutoDialLoad.aspx?ActivateAutoDialID=EIDFDF8J
-
-<a href="https://www.votebuilder.com/AutoDialLoad.aspx?ActivateAutoDialID=36831">CA2NV Recruit 10.1</a>
-*/
-
-
+    var id = this.autoDialId(this.url);
+    this.ev.phonebank = { id: id };
+    if (id) {
+        this.ev.phonebank = localStorage.getItem('pb'+id);
+    }
+    var submitButton = $('input[type="submit"]')[0];
+    submitButton.addEventListener('click', function() {
+        keen.addEvent('phonebank-leaderboard', this.ev, function() {}, false);
+        console.log('send event', this.ev);
+    });
 };
 
 /*
@@ -173,3 +204,5 @@ VoteBuilderPage.prototype.phonebank = function() {
     return pb;
 };
 
+var page = new VoteBuilderPage(document.location.href);
+page.log();
