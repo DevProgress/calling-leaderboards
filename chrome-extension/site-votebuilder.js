@@ -112,15 +112,16 @@ VoteBuilderPage.prototype.manualCheckin = function() {
 */
 VoteBuilderPage.prototype.manualCall = function() {
     this.ev.dialer = 'manual';
+    this.ev.action = 'call';
     var skipButton = $('input[value="Skip"]')[0];
     skipButton.addEventListener('click', function() {
-        this.ev.action = 'no contact';
+        this.ev.contact = false;
         keen.addEvent('phonebank-leaderboard', this.ev, function() {}, false);
         console.log('send event', this.ev);
     }, false);
     var saveButton = $('input[value="Save - Next Household"]')[0];
     saveButton.addEventListener('click', function() {
-        this.ev.action = 'contact';
+        this.ev.contact = true;
         this.ev.survey = this.surveyAnswers(false);
         keen.addEvent('phonebank-leaderboard', this.ev, function() {}, false);
         console.log('send event', this.ev);
@@ -154,15 +155,16 @@ VoteBuilderPage.prototype.predictiveCheckin = function() {
 */
 VoteBuilderPage.prototype.predictiveCall = function() {
     this.ev.dialer = 'predictive';
+    this.ev.action = 'call';
     var submitButton = $('input[type="submit"]')[0];
     submitButton.addEventListener('click', function() {
         var noAnswer = $('#TDResults input:checked');
         if (noAnswer.length) {
-            this.ev.action = 'no contact';
+            this.ev.contact = true;
             var answerId = $(noAnswer[0]).attr('id');
             this.ev.reason = $('label[for="'+answerId+'"]').text().trim();
         } else {
-            this.ev.action = 'contact';
+            this.ev.contact = true;
             this.ev.survey = this.surveyAnswers(true);
         }
         keen.addEvent('phonebank-leaderboard', this.ev, function() {}, false);
