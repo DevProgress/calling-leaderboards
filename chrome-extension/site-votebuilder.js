@@ -160,7 +160,7 @@ VoteBuilderPage.prototype.predictiveCall = function() {
     submitButton.addEventListener('click', function() {
         var noAnswer = $('#TDResults input:checked');
         if (noAnswer.length) {
-            this.ev.contact = true;
+            this.ev.contact = false;
             var answerId = $(noAnswer[0]).attr('id');
             this.ev.reason = $('label[for="'+answerId+'"]').text().trim();
         } else {
