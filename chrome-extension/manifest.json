@@ -6,37 +6,28 @@
     "icons": {
         "128": "dev_progress128.png"
     },
-    "background": {
-        "persistent": false,
-        "scripts": [
-            "bg.js"
-        ]
+    "browser_action": {
+        "default_title": "Phonebank leaderboard",
+        "default_icon": "dev_progress19.png",
+        "default_popup": "popup.html"
     },
     "content_scripts": [
         {
             "matches": [
-                "https://www.votebuilder.com/MyListVirtualPhoneBank.aspx",
-                "https://www.votebuilder.com/ContactDetailScript.aspx",
-                "https://www.votebuilder.com/AutoDialDisposition.aspx",
-                "http://localhost:8000/*"
+                "http://localhost:8000/*",
+                "https://www.votebuilder.com/*"
             ],
             "js": [
                 "bower_components/keen-js/dist/keen-tracker.min.js",
                 "bower_components/jquery-1.11.1/dist/jquery.min.js",
                 "keen.js",
-                "votebuilder.js"
+                "site-votebuilder.js"
             ],
             "all_frames": true
         }
     ],
     "permissions": [
         "http://localhost:8000/*",
-        "https://www.votebuilder.com/MyListVirtualPhoneBank.aspx",
-        "https://www.votebuilder.com/ContactDetailScript.aspx"
-    ],
-    "browser_action": {
-        "default_title": "",
-        "default_icon": "dev_progress19.png",
-        "default_popup": "popup.html"
-    }
+        "https://www.votebuilder.com/*"
+    ]
 }
