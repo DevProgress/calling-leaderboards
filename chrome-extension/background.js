@@ -35,14 +35,14 @@ widgets.leaderboard = function() {
     options.filters.push({
         'operator': 'eq',
         'property_name': 'action',
-        'property_value': 'checkin'
+        'property_value': 'call'
     });
     options.groupBy = ['user.name'];
     var query = new Keen.Query('count', options);
 
     var table = new Keen.Dataviz()
         .chartType('table')
-        .title('Checkin leaderboard')
+        .title('Calls leaderboard')
         .chartOptions({showRowNumber: true})
         .el(document.getElementById('leaderboard'));
     client.run(query, function(err, res) {
@@ -51,7 +51,7 @@ widgets.leaderboard = function() {
             .call(function() {
                 // Rename the header row
                 this.dataset.updateRow(0, function(value, index) {
-                    return ['Name', 'Checkins'][index];
+                    return ['Name', 'Calls'][index];
                 });
                 this.dataset.sortRows('desc', function(row) {
                     return row[1];
@@ -67,7 +67,7 @@ widgets.totalCount = function() {
     var count = new Keen.Query('count', options);
     client.draw(count, document.getElementById('totalCount'), {
         chartType: 'metric',
-        title: 'Total Checkins',
+        title: 'Total Calls',
         colors: ['#49c5b1']
     });
 };
@@ -90,7 +90,7 @@ widgets.myCount = function() {
     var count = new Keen.Query('count', options);
     client.draw(count, document.getElementById('myCount'), {
         chartType: 'metric',
-        title: 'Checkins',
+        title: 'My Calls',
         colors: ['#49c5b1']
     });
 };
