@@ -138,7 +138,9 @@ VoteBuilderPage.prototype.predictiveCheckin = function() {
     var id = this.autoDialId(this.url);
     this.ev.phonebank = { id: id };
     if (id) {
-        this.ev.phonebank = localStorage.getItem('pb'+id);
+        this.ev.phonebank.name = localStorage.getItem('pb'+id);
+        localStorage.setItem('phonebankId', this.ev.phonebank.id);
+        localStorage.setItem('phonebankName', this.ev.phonebank.name);
     }
     var submitButton = $('input[type="submit"]')[0];
     submitButton.addEventListener('click', function() {
