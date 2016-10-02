@@ -5,10 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DevProgress Leaderboard</title>
     <script src="bower_components/keen-js/dist/keen.min.js"></script>
-x    <script src="background.js"></script>
+    <script src="keen-read.js"></script>
+    <script src="background.js"></script>
 </head>
 <body>
-    background
+<!--
+    This background page contains widgets with data loaded from Keen.
+    Data refreshes when this page when one of:
+    - page receives a message with a new phonebank or user
+    - page receives a message with update: true
+    - pages has not been updated in the last 5 minutes
+-->
     <div id="totalCount"></div>
     <div id="myCount"></div>
     <div id="leaderboard"></div>

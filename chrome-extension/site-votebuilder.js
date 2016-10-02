@@ -138,7 +138,7 @@ VoteBuilderPage.prototype.manualCall = function() {
     skipButton.addEventListener('click', function() {
         this.ev.contact = false;
         this.send();
-    }, false).bind(this);
+    }.bind(this), false);
     var saveButton = $('input[value="Save - Next Household"]')[0];
     saveButton.addEventListener('click', function() {
         this.ev.contact = true;
@@ -193,8 +193,10 @@ VoteBuilderPage.prototype.predictiveCall = function() {
 
 VoteBuilderPage.prototype.surveyAnswers = function(table)  {
     var survey = {};
+    var question = 1;
     $('select').each(function() {
         var val = $(this).val();
+        survey.index = question;
         if (!val || val === '0') {
             return;
         }
@@ -205,9 +207,22 @@ VoteBuilderPage.prototype.surveyAnswers = function(table)  {
             question = $(this).parent().parent().find('label').text().trim();
         }
         var answer = $(this).find('option[value="'+val+'"]').text().trim();
+        // get answer index within select
+        var answerIndex = 0;
+        var a = 1;
+        var found = false;
+        $(this).find('option').each(function() {
+            if ($(this).attr('value') === answer) {
+                answerIndex = a;
+            }
+            a += 1;
+        });
         if (answer) {
-            survey[question] = answer;
+            survey.question = question;
+            survey.answer = answer;
+            survey.answerIndex = answerIndex;
         }
+        question += 1;
     });
     return survey;
 };
