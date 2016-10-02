@@ -2,25 +2,24 @@
 <html>
   <head>
     <title>DevProgress Leaderboard</title>
-    <style>
-      body {
-        font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
-        font-size: 100%;
-      }
-      #status {
-        /* avoid an excessively wide status text */
-        white-space: pre;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        max-width: 400px;
-      }
-    </style>
-
+    <script src="bower_components/jquery-1.11.1/dist/jquery.min.js"></script>
     <script src="popup.js"></script>
+    <style id="keen-widgets"></style>
+    <link rel="stylesheet" type="text/css" href="popup.css">
+    <link rel="stylesheet" type="text/css" href="https://www.google.com/uds/api/visualization/1.1/e958f33020f6e1d242478538a1eba0da/ui+en,table+en.css">
   </head>
   <body>
-    display leaderboard
-    with this user's standing
+    <div id="widgets">
+      <div class="metrics">
+        <div class="count" id="myCount"></div>
+        <div class="count" id="totalCount"></div>
+      </div>
+      <h3>Leaderboard</h3>
+      <div id="leaderboard"></div>
+    </div>
+    <div id="noResults">
+      <h3>No activity yet for this phonebank.</h3>
+    </div>
   </body>
 </html>
 

@@ -35,6 +35,7 @@ function VoteBuilderPage(url) {
 
 VoteBuilderPage.prototype.log = function() {
     this.ev.phonebank = this.phonebank();
+    this.sendContext();
     if (this.url.indexOf('VirtualPhoneBankRun') >= 0) {
         return this.manualCheckin();
     }
@@ -48,6 +49,27 @@ VoteBuilderPage.prototype.log = function() {
         return this.predictiveCall();
     }
     this.phonebankMapping();
+};
+
+VoteBuilderPage.prototype.sendContext = function(update) {
+    if (this.ev.phonebank) {
+        var data = {
+            user: this.ev.user,
+            phonebank: this.ev.phonebank
+        };
+        if (update) {
+            data.update = true;
+        }
+        chrome.runtime.sendMessage(data, function(response) {
+            console.log('leaderboard: sent user and phonebank', data);
+        });
+    }
+};
+
+VoteBuilderPage.prototype.send = function() {
+    console.log('leaderboard: sending event', this.ev);
+    keen.addEvent('phonebank-leaderboard', this.ev, function() {}, false);
+    this.sendContext(true);
 };
 
 /*
@@ -89,7 +111,7 @@ VoteBuilderPage.prototype.phonebankMapping = function() {
 VoteBuilderPage.prototype.manualCheckin = function() {
     this.ev.action = 'checkin';
     var re = new RegExp('VirtualPhoneBankListID=(.*)');
-    var match = re.exec(url);
+    var match = re.exec(this.url);
     if (match && match.length > 1) {
         this.ev.phonebank.id = match[1];
         localStorage.setItem('phonebankId', this.ev.phonebank.id);
@@ -99,9 +121,8 @@ VoteBuilderPage.prototype.manualCheckin = function() {
 
     var submitButton = $('input[type="submit"]')[0];
     submitButton.addEventListener('click', function() {
-        keen.addEvent('phonebank-leaderboard', this.ev, function() {}, false);
-        console.log('send event', this.ev);
-    });
+        this.send();
+    }.bind(this));
 };
 
 /*
@@ -116,16 +137,14 @@ VoteBuilderPage.prototype.manualCall = function() {
     var skipButton = $('input[value="Skip"]')[0];
     skipButton.addEventListener('click', function() {
         this.ev.contact = false;
-        keen.addEvent('phonebank-leaderboard', this.ev, function() {}, false);
-        console.log('send event', this.ev);
-    }, false);
+        this.send();
+    }, false).bind(this);
     var saveButton = $('input[value="Save - Next Household"]')[0];
     saveButton.addEventListener('click', function() {
         this.ev.contact = true;
         this.ev.survey = this.surveyAnswers(false);
-        keen.addEvent('phonebank-leaderboard', this.ev, function() {}, false);
-        console.log('send event', this.ev);
-    }, false);
+        this.send();
+    }.bind(this), false);
 };
 
 /*
@@ -144,9 +163,8 @@ VoteBuilderPage.prototype.predictiveCheckin = function() {
     }
     var submitButton = $('input[type="submit"]')[0];
     submitButton.addEventListener('click', function() {
-        keen.addEvent('phonebank-leaderboard', this.ev, function() {}, false);
-        console.log('send event', this.ev);
-    });
+        this.send();
+    }.bind(this));
 };
 
 /*
@@ -169,9 +187,8 @@ VoteBuilderPage.prototype.predictiveCall = function() {
             this.ev.contact = true;
             this.ev.survey = this.surveyAnswers(true);
         }
-        keen.addEvent('phonebank-leaderboard', this.ev, function() {}, false);
-        console.log('send event', this.ev);
-    });
+        this.send();
+    }.bind(this));
 };
 
 VoteBuilderPage.prototype.surveyAnswers = function(table)  {
