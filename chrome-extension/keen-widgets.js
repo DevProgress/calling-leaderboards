@@ -151,7 +151,7 @@ keenWidgets.callsPerCaller = function(options, id) {
         }
         metric
             .parseRawData({ result: avg })
-            .title('Callers')
+            .title('Average calls per caller')
             .render();
     });
 };

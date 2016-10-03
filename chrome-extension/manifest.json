@@ -1,13 +1,13 @@
 {
     "manifest_version": 2,
-    "name": "DevProgress leaderboard",
+    "name": "DevProgress Leaderboard",
     "version": "0.1",
-    "description": "Logs calling activities to DevProgress",
+    "description": "Logs calling activities to DevProgress leaderboard",
     "icons": {
         "128": "dev_progress128.png"
     },
     "browser_action": {
-        "default_title": "Phonebank leaderboard",
+        "default_title": "DevProgress phonebank leaderboard",
         "default_icon": "dev_progress19.png",
         "default_popup": "popup.html"
     },
@@ -34,5 +34,7 @@
         "persistent": true,
         "page": "background.html"
     },
-    "content_security_policy": "script-src 'self' https://www.google.com https://www.google.com/jsapi; object-src 'self'"
+    "content_security_policy": "script-src 'self' https://www.google.com https://www.google.com/jsapi; object-src 'self'",
+    "homepage_url": "http://devprogress.us",
+    "short_name": "DevProgress leaderboard"
 }
