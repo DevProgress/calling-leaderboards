@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DevProgress Phonebank Leaderboard</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="css/keen-dashboards.css" />
+</head>
+<body class="application">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-3">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="chart-wrapper">
+              <div class="chart-stage" id="contactCalls">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="chart-wrapper">
+              <div class="chart-stage" id="totalCalls">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="chart-wrapper">
+          <div class="chart-title">
+            Leaderboard
+          </div>
+          <div class="chart-stage" id="leaderboard">
+          </div>
+          <div class="chart-notes" id="leaderboardNotes">
+            As of <span id="lastUpdated"></span>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="chart-wrapper">
+              <div class="chart-stage" id="uniqueCallers">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="chart-wrapper">
+              <div class="chart-stage" id="callsPerCaller">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row survey">
+      <div class="col-sm-4">
+        <div class="chart-wrapper">
+          <div class="chart-title" id="survey1Title">
+            Survey #1
+          </div>
+          <div class="chart-stage" id="survey1">
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="chart-wrapper">
+          <div class="chart-title" id="survey2Title">
+            Survey #2
+          </div>
+          <div class="chart-stage" id="survey2">
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="chart-wrapper">
+          <div class="chart-title" id="survey3Title">
+            Survey #3
+          </div>
+          <div class="chart-stage" id="survey3">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row survey">
+      <div class="col-sm-4">
+        <div class="chart-wrapper">
+          <div class="chart-title" id="survey4Title">
+            Survey #4
+          </div>
+          <div class="chart-stage" id="survey4">
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="chart-wrapper">
+          <div class="chart-title" id="survey5Title">
+            Survey #5
+          </div>
+          <div class="chart-stage" id="survey5">
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="chart-wrapper">
+          <div class="chart-title" id="survey6Title">
+            Survey #6
+          </div>
+          <div class="chart-stage" id="survey6">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <hr>
+    <p class="small text-muted">Built by <a href="http://devprogress.us">DevProgress.us</a></p>
+  </div>
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/keen-js/3.4.1/keen.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
+  <script type="text/javascript" src="chrome-extension/keen-read.js"></script>
+  <script type="text/javascript" src="chrome-extension/keen-widgets.js"></script>
+  <script type="text/javascript" src="js/dashboard.js"></script>
+</body>
+</html>

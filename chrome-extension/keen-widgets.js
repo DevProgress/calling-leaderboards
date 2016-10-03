@@ -37,13 +37,15 @@ keenWidgets.totalCalls = function(options, id) {
         'property_name': 'action',
         'property_value': 'call'
     });
-    var count = new Keen.Query('count', options);
-    // TODO: does return value of client.draw have .refresh?
-    return client.draw(count, document.getElementById(id), {
-        chartType: 'metric',
-        title: 'Total Calls',
-        // TODO: darker blue
-        colors: ['#49c5b1']
+    var query = new Keen.Query('count', options);
+    var metric = new Keen.Dataviz()
+        .el(document.getElementById(id))
+        .prepare();
+    return client.run(query, function() {
+        metric
+            .parseRequest(this)
+            .title('Total calls')
+            .render();
     });
 };
 
@@ -53,13 +55,15 @@ keenWidgets.contactCalls = function(options, id) {
         'property_name': 'contact',
         'property_value': true
     });
-    var count = new Keen.Query('count', options);
-    // TODO: does return value of client.draw have .refresh?
-    return client.draw(count, document.getElementById(id), {
-        chartType: 'metric',
-        title: 'Contact Calls',
-        // TODO: darker blue
-        colors: ['#49c5b1']
+    var query = new Keen.Query('count', options);
+    var metric = new Keen.Dataviz()
+        .el(document.getElementById(id))
+        .prepare();
+    return client.run(query, function() {
+        metric
+            .parseRequest(this)
+            .title('Calls with contact')
+            .render();
     });
 };
 
@@ -78,12 +82,15 @@ keenWidgets.myCalls = function(options, username, id) {
         'property_name': 'user.username',
         'property_value': username
     });
-    var count = new Keen.Query('count', options);
-    return client.draw(count, document.getElementById(id), {
-        chartType: 'metric',
-        title: 'My Calls',
-        // TODO: darker blue
-        colors: ['#49c5b1']
+    var query = new Keen.Query('count', options);
+    var metric = new Keen.Dataviz()
+        .el(document.getElementById(id))
+        .prepare();
+    return client.run(query, function() {
+        metric
+            .parseRequest(this)
+            .title('My calls')
+            .render();
     });
 };
 
@@ -94,18 +101,62 @@ keenWidgets.uniqueCallers = function(options, id) {
         'property_name': 'action',
         'property_value': 'checkin'
     });
-    var count = new Keen.Query('count_unique', options);
-    // TODO: does return value of client.draw have .refresh?
-    return client.draw(count, document.getElementById(id), {
-        chartType: 'metric',
-        title: 'Callers',
-        // TODO: darker blue
-        colors: ['#49c5b1']
+    var query = new Keen.Query('count_unique', options);
+    var metric = new Keen.Dataviz()
+        .el(document.getElementById(id))
+        .prepare();
+    return client.run(query, function() {
+        metric
+            .parseRequest(this)
+            .title('Callers')
+            .render();
+    });
+};
+
+keenWidgets.callsPerCaller = function(options, id) {
+    options.filters.push();
+    options.analyses = {
+        'calls': {
+            'analysis_type': 'count',
+            'filters': [
+                {
+                    'operator': 'eq',
+                    'property_name': 'action',
+                    'property_value': 'call'
+                }
+            ]
+        },
+        'callers': {
+            'analysis_type': 'count_unique',
+            'target_property': 'user.username',
+            'filters': [
+                {
+                    'operator': 'eq',
+                    'property_name': 'action',
+                    'property_value': 'checkin'
+                }
+            ]
+        }
+    };
+    var query = new Keen.Query('multi_analysis', options);
+    var metric = new Keen.Dataviz()
+        .el(document.getElementById(id))
+        .prepare();
+    return client.run(query, function() {
+        // {callers: 1, calls: 2}
+        var result = this.data.result;
+        var avg = 0;
+        if (result && result.callers && result.calls) {
+            avg = Math.round((result.callers/result.calls)*10)/10;
+        }
+        metric
+            .parseRawData({ result: avg })
+            .title('Callers')
+            .render();
     });
 };
 
 keenWidgets.survey = function(options, index, question, id) {
-    options.action = 'call';
     options.filters.push({
         'operator': 'eq',
         'property_name': 'survey.index',
@@ -113,9 +164,6 @@ keenWidgets.survey = function(options, index, question, id) {
     });
     options.groupBy = 'question.answer';
     // sort by survey.answerIndex
-    // TODO: does return value of client.draw have .refresh?
-    return client.draw(count, document.getElementById(id), {
-        chartType: 'metric',
-        title: question,
-    });
+    var query = new Keen.Query('count', options);
+    // TODO:
 };

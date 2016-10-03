@@ -27,10 +27,9 @@ var widgets = [];
 
 Keen.ready(function() {
     console.log('keen.ready');
-    var options = defaultOptions();
-    widgets.push(keenWidgets.leaderboard(options, 'leaderboard'));
-    widgets.push(keenWidgets.totalCalls(options, 'totalCount'));
-    widgets.push(keenWidgets.myCount(options, username, 'myCount'));
+    widgets.push(keenWidgets.leaderboard(defaultOptions(), 'leaderboard'));
+    widgets.push(keenWidgets.totalCalls(defaultOptions(), 'totalCount'));
+    widgets.push(keenWidgets.myCount(defaultOptions(), username, 'myCount'));
     updated = new Date();
     // refresh at least every 5 minutes
     setInterval(function() {
