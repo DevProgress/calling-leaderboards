@@ -69,8 +69,7 @@ keenWidgets.contactCalls = function(options, id) {
 
 keenWidgets.myCalls = function(options, username, id) {
     if (!username) {
-        document.getElementById(id).innerText = '';
-        return;
+        username = 'placeholder_username_'+(new Date()).getTime();
     }
     options.filters.push({
         'operator': 'eq',

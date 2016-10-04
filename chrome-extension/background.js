@@ -1,7 +1,7 @@
 console.log('keen client');
 
-var phonebankId = null;
-var username = null;
+var phonebank = null;
+var user = null;
 var updated = new Date();
 
 function defaultOptions() {
@@ -11,12 +11,12 @@ function defaultOptions() {
         timezone: 'America/Los_Angeles',
         filters: []
     };
-    if (phonebankId) {
+    if (phonebank && phonebank.id) {
         options.filters = [
             {
                 'operator': 'eq',
                 'property_name': 'phonebank.id',
-                'property_value': phonebankId
+                'property_value': phonebank.id
             }
         ];
     }
@@ -27,9 +27,10 @@ var widgets = [];
 
 Keen.ready(function() {
     console.log('keen.ready');
+    var username = user ? user.username : null;
     widgets.push(keenWidgets.leaderboard(defaultOptions(), 'leaderboard'));
-    widgets.push(keenWidgets.totalCalls(defaultOptions(), 'totalCount'));
-    widgets.push(keenWidgets.myCount(defaultOptions(), username, 'myCount'));
+    widgets.push(keenWidgets.totalCalls(defaultOptions(), 'totalCalls'));
+    widgets.push(keenWidgets.myCalls(defaultOptions(), username, 'myCalls'));
     updated = new Date();
     // refresh at least every 5 minutes
     setInterval(function() {
@@ -45,12 +46,13 @@ Keen.ready(function() {
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     console.log('got message ', request);
     var update = false;
-    if (request.phonebank && request.phonebank.id && request.phonebank.id !== phonebankId) {
-        phonebankId = request.phonebank.id;
+    if (request.phonebank && request.phonebank.id && (!phonebank || request.phonebank.id !== phonebank.id)) {
+        phonebank = request.phonebank;
+        document.getElementById('phonebankName').innerHTML = phonebank.name || '';
         update = true;
     }
-    if (request.user && request.user.username && request.username !== username) {
-        username = request.user.username;
+    if (request.user && request.user.username && (!user || request.username !== user.username)) {
+        user = request.user.username;
         update = true;
     }
     if (update || request.update) {
