@@ -34,6 +34,7 @@ function VoteBuilderPage(url) {
 }
 
 VoteBuilderPage.prototype.log = function() {
+    this.savePhonebank();
     this.ev.phonebank = this.phonebank();
     this.sendContext();
     if (this.url.indexOf('VirtualPhoneBankRun') >= 0) {
@@ -48,7 +49,6 @@ VoteBuilderPage.prototype.log = function() {
     if (this.url.indexOf('AutoDialDisposition') >= 0) {
         return this.predictiveCall();
     }
-    this.phonebankMapping();
 };
 
 VoteBuilderPage.prototype.sendContext = function(update) {
@@ -86,7 +86,7 @@ VoteBuilderPage.prototype.autoDialId = function(url) {
     look for links to AutoDialLoad
     save id-name mapping in localstorage
 */
-VoteBuilderPage.prototype.phonebankMapping = function() {
+VoteBuilderPage.prototype.savePhonebank = function() {
     // <a href="https://www.votebuilder.com/AutoDialLoad.aspx?ActivateAutoDialID=36831">CA2NV Recruit 10.1</a>
     var self = this;
     $('a').each(function() {
