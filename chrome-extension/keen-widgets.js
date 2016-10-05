@@ -12,7 +12,7 @@ keenWidgets.leaderboard = function(options, id) {
     var table = new Keen.Dataviz()
         .chartType('table')
         .title('Calls leaderboard')
-        .chartOptions({showRowNumber: true})
+        .chartOptions({showRowNumber: true, width: '100%'})
         .el(document.getElementById(id));
 
     return client.run(query, function(err, res) {
@@ -28,6 +28,7 @@ keenWidgets.leaderboard = function(options, id) {
                 });
             })
             .render();
+        $('#leaderboard thead th:first').text('#');
     });
 };
 
@@ -98,7 +99,7 @@ keenWidgets.uniqueCallers = function(options, id) {
     options.filters.push({
         'operator': 'eq',
         'property_name': 'action',
-        'property_value': 'checkin'
+        'property_value': 'call'
     });
     var query = new Keen.Query('count_unique', options);
     var metric = new Keen.Dataviz()
@@ -113,28 +114,18 @@ keenWidgets.uniqueCallers = function(options, id) {
 };
 
 keenWidgets.callsPerCaller = function(options, id) {
-    options.filters.push();
+    options.filters.push({
+        'operator': 'eq',
+        'property_name': 'action',
+        'property_value': 'call'
+    });
     options.analyses = {
         'calls': {
-            'analysis_type': 'count',
-            'filters': [
-                {
-                    'operator': 'eq',
-                    'property_name': 'action',
-                    'property_value': 'call'
-                }
-            ]
+            'analysis_type': 'count'
         },
         'callers': {
             'analysis_type': 'count_unique',
-            'target_property': 'user.username',
-            'filters': [
-                {
-                    'operator': 'eq',
-                    'property_name': 'action',
-                    'property_value': 'checkin'
-                }
-            ]
+            'target_property': 'user.username'
         }
     };
     var query = new Keen.Query('multi_analysis', options);
@@ -146,11 +137,11 @@ keenWidgets.callsPerCaller = function(options, id) {
         var result = this.data.result;
         var avg = 0;
         if (result && result.callers && result.calls) {
-            avg = Math.round((result.callers/result.calls)*10)/10;
+            avg = Math.round((result.calls/result.callers)*10)/10;
         }
         metric
             .parseRawData({ result: avg })
-            .title('Average calls per caller')
+            .title('Calls per caller')
             .render();
     });
 };
