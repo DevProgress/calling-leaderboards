@@ -2,6 +2,64 @@
 
 Call-tool leaderboards! For phone bankers to compete with each other.
 
+## how it works
+
+[chrome-extension/manifest.json](manifest.json) defines the Chrome extension.  On URLs matching `https://www.votebuilder.com/*`:
+
+### content script
+
+Load Keen SDK, jQuery, and Keen API key (dependencies) and [chrome-extension/site-votebuilder.js](site-votebuilder.js).  This script:
+- get username and full name from current Votebuilder page
+- extract committee and state from a Votebuilder script tag
+- look for links to an `AutoDialLoad` page (example: `<a href="https://www.votebuilder.com/AutoDialLoad.aspx?ActivateAutoDialID=36831">CA2NV Recruit 10.1</a>`).  Extract the phonebank id from the URL query param and the name from the link, and save in localStorage
+- send a message using `chrome.runtime.sendMessage` containing the user, phonebank, and comittee info (who is this user, and which phonebank are they using)
+
+Four pages send an event to Keen.io containing the dialer type, username, full name, phonebank, com,ittee, state, and action.
+
+#### Manual dialer
+
+On `VirtualPhoneBankRun`, get phoneank id and name from the DOM, and send an event with `action: checkin` when user clicks the _Next_ button
+
+On `ContactDetailScript`, send an event with `action call`.  Add a `contact` param:
+- click _Skip_: send `contact: false`
+- click _Save - Next Household_: send `contact: true`
+
+#### Predictive dialer
+
+On `AutoDialLoad`, get phonebank id from the URL and the name from localStorage. Send an event with `action: checkin` when user clicks the _Next_ button
+
+On `AutoDialDisposition`, send an event with `action call`.  Add a `contact` param:
+- if reason selected: send `contact: false` and `reason: selected_reason`
+- send `contact: true`
+
+#### survey
+
+Both the manual and predictive dialers have surveys.  On both pages, extract get selected values from survey, and send with event:
+
+    survey: {
+        index: "3"
+        question: "What's the answer?",
+        answer: "42",
+        answerIndex: 3
+    }
+
+Results for first six survey questions are viewable on [dashboard.html](dashboard.html)
+
+
+### background page
+
+In an invisible background tab, load [chrome-extension/background.html](background.html).  This page:
+
+Loads data from Keen, draws metric counts and the leaderboard table, and writes the phonebank name.  It can take a few seconds to fully load the data.  This page loads it in the background, so that it's available immediately when the user clicks the extension button.
+
+Listens for the messages sent by the extension when a user does something (call or checkin), and refreshes the data if needed.
+
+Refreshes the data if it's been 5 minutes since the last update.
+
+### popup
+
+When the user clicks the extension's button, load [chrome-extension/popup.html](popup.html) into the extension window.  This page copies the metrics and leaderboard content from the background page's DOM, and displays a link to the full dashboard.
+
 ## setup
 
 ### load local version of extension
