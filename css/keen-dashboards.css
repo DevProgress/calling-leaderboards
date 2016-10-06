@@ -100,3 +100,19 @@ body.application .return-link:hover,
 .keen-metric {
     background: #0D98E6 !important;
 }
+
+.index h2 {
+  border-bottom: 1px solid #d7d7d7;
+  color: #666;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.index img {
+  padding: 5px;
+  margin: 10px;
+}
+
+.index div {
+  margin-bottom: 10px;
+}
