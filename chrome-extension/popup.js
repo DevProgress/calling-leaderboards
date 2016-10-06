@@ -2,7 +2,7 @@ window.onload = function() {
     var doc = chrome.extension.getBackgroundPage().document;
     // copy Keen styles
     var style = doc.getElementById('keen-widgets');
-    document.getElementById('keen-widgets').innerHTML = style.innerHTML || '';
+    document.getElementById('keen-widgets').innerHTML = style && style.innerHTML || '';
     // copy content from background page to popup
     ['totalCalls', 'myCalls', 'leaderboard'].forEach(function(id) {
         var el = doc.getElementById(id);
@@ -10,11 +10,12 @@ window.onload = function() {
     });
     var phonebankName = doc.getElementById('phonebankName').innerHTML;
     if (phonebankName) {
-        $('#dashboardLink').attr('href', 'http://devprogress.us/calling-leaderboards/dashboard.html?name=phonebank.name&value='+encodeURIComponent(phonebank.name));
+        $('#dashboardLink a').attr('href', 'http://devprogress.us/calling-leaderboards/dashboard.html?name=phonebank.name&value='+encodeURIComponent(phonebankName));
+        $('#phonebankName').text(phonebankName);
     } else {
-        $('#dashboardLink').hide();
+        $('#phonebank').hide();
     }
-    var total = $('#totalCount').text().trim();
+    var total = $('#totalCalls').text().trim();
     if (total === '' || total.indexOf('0') === 0) {
         $('#widgets').hide();
         $('#noResults').show();

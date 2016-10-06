@@ -28,6 +28,7 @@ keenWidgets.leaderboard = function(options, id) {
                 });
             })
             .render();
+        $('#leaderboard thead th:first').text('#');
     });
 };
 
@@ -124,7 +125,7 @@ keenWidgets.callsPerCaller = function(options, id) {
         },
         'callers': {
             'analysis_type': 'count_unique',
-            'target_property': 'user.username',
+            'target_property': 'user.username'
         }
     };
     var query = new Keen.Query('multi_analysis', options);
@@ -136,7 +137,7 @@ keenWidgets.callsPerCaller = function(options, id) {
         var result = this.data.result;
         var avg = 0;
         if (result && result.callers && result.calls) {
-            avg = Math.round((result.callers/result.calls)*10)/10;
+            avg = Math.round((result.calls/result.callers)*10)/10;
         }
         metric
             .parseRawData({ result: avg })

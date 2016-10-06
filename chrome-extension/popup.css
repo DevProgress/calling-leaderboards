@@ -1,11 +1,15 @@
 body {
-    min-width: 250px;
+    min-width: 220px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .count {
-    width: 45%;
-    margin-right: 5px;
+    width: 100px;
     display: inline-block;
+}
+
+#totalCalls {
+    float: right;
 }
 
 .metrics {
@@ -14,6 +18,7 @@ body {
 
 .keen-metric {
     padding: 5px 0;
+    background: #0D98E6 !important;
 }
 .keen-metric-value {
     font-size: 24px;
@@ -21,5 +26,19 @@ body {
 }
 
 .keen-metric-title {
-    font-size: 16px;
+    font-size: 12px;
+}
+
+#phonebank {
+    border-bottom: 1px solid #ccc;
+}
+
+a {
+    color: #0d98e6;
+}
+a:link, a:visited {
+    text-decoration: none;
+}
+#dashboardLink {
+    font-size: 12px;
 }

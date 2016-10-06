@@ -13,11 +13,15 @@ var defaultOptions = {
 var filter = {operator: 'eq'};
 var queryParams = location.search.replace('?', '').split('&');
 queryParams.forEach(function(param) {
-    var parts = param.split();
-    if (parts.length < 2 || (param[0] !== 'name' || param[0] !== 'value')) {
+    var parts = param.split('=');
+    if (parts.length < 2 || (parts[0] !== 'name' && parts[0] !== 'value')) {
         return;
     }
-    filter['property_'+param[0]] = param[1];
+    var val = decodeURIComponent(parts[1]);
+    if (parts[0] === 'value') {
+        $('#leaderboardLabel').text(val);
+    }
+    filter['property_'+parts[0]] = val;
 });
 if (filter.property_name && filter.property_value) {
     defaultOptions.filters.push(filter);
