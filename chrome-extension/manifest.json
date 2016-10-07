@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "DevProgress Leaderboard",
-    "version": "0.3",
+    "version": "0.4",
     "description": "Logs calling activities to DevProgress leaderboard",
     "icons": {
         "128": "dev_progress128.png"
@@ -14,7 +14,6 @@
     "content_scripts": [
         {
             "matches": [
-                "http://localhost:8000/*",
                 "https://www.votebuilder.com/*"
             ],
             "js": [
@@ -27,7 +26,6 @@
         }
     ],
     "permissions": [
-        "http://localhost:8000/*",
         "https://www.votebuilder.com/*"
     ],
     "background": {

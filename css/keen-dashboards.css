@@ -116,3 +116,7 @@ body.application .return-link:hover,
 .index div {
   margin-bottom: 10px;
 }
+
+text[aria-hidden] {
+  display: none;
+}

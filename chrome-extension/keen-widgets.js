@@ -157,3 +157,32 @@ keenWidgets.survey = function(options, index, question, id) {
     var query = new Keen.Query('count', options);
     // TODO:
 };
+
+keenWidgets.vsOtherPhonebanks = function(options, id) {
+    // replace filters; don't want a single phonebank
+    options.filters = [
+        {
+            'operator': 'eq',
+            'property_name': 'action',
+            'property_value': 'call'
+        }
+    ];
+    options.groupBy = ['phonebank.name'];
+    var query = new Keen.Query('count', options);
+    var chart = new Keen.Dataviz()
+        .chartType('barchart')
+        .colors(['#0D98E6'])
+        .el(document.getElementById(id))
+        .chartOptions({
+            legend: { position: 'none' },
+            vAxis: {
+                format: 'short', textPosition: 'in', textStyle: { color: 'white' } },
+        })
+        .prepare();
+    return client.run(query, function() {
+        chart
+            .parseRequest(this)
+            .title('')
+            .render();
+    });
+};
