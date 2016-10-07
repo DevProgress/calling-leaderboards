@@ -36,7 +36,7 @@ Keen.ready(function() {
     $('#lastUpdated').text(moment().format('M/D/YYYY h:mm a'));
     var refresh = [];
     // run all the widgets
-    var widgets = ['contactCalls', 'totalCalls', 'leaderboard', 'uniqueCallers', 'callsPerCaller'];
+    var widgets = ['contactCalls', 'totalCalls', 'leaderboard', 'uniqueCallers', 'callsPerCaller', 'vsOtherPhonebanks'];
     widgets.forEach(function(id) {
         var options = JSON.parse(JSON.stringify(defaultOptions));
         refresh.push(keenWidgets[id](options, id));
