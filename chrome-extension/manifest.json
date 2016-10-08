@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "DevProgress Leaderboard",
-    "version": "0.4",
+    "version": "0.5",
     "description": "Logs calling activities to DevProgress leaderboard",
     "icons": {
         "128": "dev_progress128.png"
@@ -14,7 +14,8 @@
     "content_scripts": [
         {
             "matches": [
-                "https://www.votebuilder.com/*"
+                "https://www.votebuilder.com/*",
+                "https://www.nevadavan.com/*"
             ],
             "js": [
                 "bower_components/keen-js/dist/keen-tracker.min.js",
@@ -26,7 +27,8 @@
         }
     ],
     "permissions": [
-        "https://www.votebuilder.com/*"
+        "https://www.votebuilder.com/*",
+        "https://www.nevadavan.com/*"
     ],
     "background": {
         "persistent": true,
