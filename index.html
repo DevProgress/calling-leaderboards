@@ -62,6 +62,19 @@ Install the Chrome plugin:
 </div>
 
 <div>
+  If you're running an ad blocker, you may have trouble seeing the <a href="http://devprogress.us/calling-leaderboards/dashboard.html">dashboard</a>.  The EasyPrivacy list blocks lots of tracking domains, including Keen.io (our datasource).  Here's how to fix it:
+
+<ul>
+  <li>click the AdBlock Plus extension button
+  <li>click Options
+  <li>click the Add your own filters tab
+  <li>paste <code>@@/keen-tracker.</code> into the box and click Add filter
+  <li>paste <code>@@/keen.min.js</code> into the box and click Add filter
+  <li>paste <code>@@||keen.io^$third-party,domain=~keen.github.io|~keen.io</code> and click Add filter
+  <li>close the AdBlock Plus tab; dashboard will now be able to get data from Keen.io
+</ul>
+</div>
+<div>
     Questions? Want more or different stats? <a href="http://github.com/devprogress/calling-leaderboards/issues/new">Talk to us</a>.
 </div>
     <p class="small text-muted">Built by <a href="http://devprogress.us">DevProgress.us</a></p>
