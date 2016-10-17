@@ -1,50 +1,11 @@
 /*
-    intercept the response for XHR requests; ignore all but the user profile call
-    save user name and id to the DOM so that content script can get at it
-    thanks to http://stackoverflow.com/questions/9515704/building-a-chrome-extension-inject-code-in-a-page-using-a-content-script/9517879
-*/
-var interceptXHR = '(' + function() {
-    var XHR = XMLHttpRequest.prototype;
-    var open = XHR.open;
-    var send = XHR.send;
-
-    XHR.open = function(method, url) {
-        this._method = method;
-        this._url = url;
-        return open.apply(this, arguments);
-    };
-
-    XHR.send = function(postData) {
-        this.addEventListener('load', function() {
-            if (this._url.indexOf('/api/the-claw/profiles/') !== 0) {
-                return;
-            }
-            var data = JSON.parse(this.responseText);
-            // save to hillaryclinton.com/calls page DOM
-            var user = document.createElement('span');
-            user.setAttribute('id', 'leaderboardUser');
-            user.setAttribute('data-id', data.profile.gwid);
-            user.setAttribute('data-name', data.profile.givenName+' '+data.profile.familyName);
-            user.setAttribute('data-zip', data.profile.zipCode);
-            document.body.appendChild(user);
-        });
-        return send.apply(this, arguments);
-    };
-} + ')();';
-
-var script = document.createElement('script');
-script.textContent = interceptXHR;
-(document.head||document.documentElement).appendChild(script);
-script.remove();
-
-/*
     create page:
     - set source to hillaryclinton/calls
     - get user and context info
 */
 function HillaryClintonPage(url) {
     this.url = url;
-    this.ev = { source: 'hillaryclinton/calls', phonebank: {} };
+    this.ev = { source: 'hillaryclinton/calls'};
     // get user info
     var user = $('#leaderboardUser');
     this.ev.user = {
@@ -52,29 +13,98 @@ function HillaryClintonPage(url) {
         name: $(user).attr('data-name'),
         zip: $(user).attr('zip')
     }
+};
+
+HillaryClintonPage.prototype.sendContext = function(update) {
+    var data = {
+        user: this.ev.user,
+        phonebank: this.ev.phonebank,
+        update: update
+    };
+    chrome.runtime.sendMessage(data, function(response) {
+        console.log('leaderboard: sent user and phonebank', data);
+    });
+};
+
+HillaryClintonPage.prototype.send = function() {
     // get the phonebank from localStorage
     this.ev.phonebank = {
         id: localStorage.getItem('phonebankId'),
         name: localStorage.getItem('phonebankName')
-    }
-}
-
-HillaryClintonPage.prototype.log = function() {
-    // TODO: write data to keen
-    console.log('page: user id='+$(user).attr('data-id')+' name='+$(user).attr('data-name'));
-    this.sendContext();
+    };
+    console.log('leaderboard: sending event', this.ev);
+    keen.addEvent('phonebank-leaderboard', this.ev, function() {}, false);
+    this.sendContext(true);
 };
 
+HillaryClintonPage.prototype.log = function() {
+    this.sendContext();
+    var match = (new RegExp('.*?calls/phonebank/(.*)')).exec(this.url);
+    if (!match) {  // not phonebank select or call page
+        return;
+    }
+    return match[1].length ? this.call() : this.checkin();
+};
 
 /*
-select phonebank: https://www.hillaryclinton.com/calls/phonebank/
-onClick a.phonebank-link
-id = href="/calls/phonebank/be40fdf6-d310-400f-8fd3-7ebdf94aaa01"
-name = $(link).closest('.row').find('h2').text()
-
-call: https://www.hillaryclinton.com/calls/phonebank/cd4f3897-980c-44b4-a755-36e2a2c42eff
-no contact = button.js_no-contact
-contact = button.js_finish-call
+    select phonebank: https://www.hillaryclinton.com/calls/phonebank/
 */
+HillaryClintonPage.prototype.checkin = function() {
+    this.ev.action = 'checkin';
+    var self = this;
+    // phonebank loads after page
+    var loaded = setInterval(function() {
+        if (!$('a.phonebank-link').length) {
+            return;
+        }
+        clearInterval(loaded);
+        $('a.phonebank-link').on('click', function() {
+            var id = $(this).attr('href').replace('/calls/phonebank/', '');
+            var name = $(this).closest('.row').find('h2').text();
+            console.log('click phonebank id='+id+' name='+name);
+            // save phonebank to localStorage
+            localStorage.setItem('phonebankId', id);
+            localStorage.setItem('phonebankName', name);
+            // send checkin
+            self.send();
+        });
+    }, 500);
+};
+
+/*
+    call: https://www.hillaryclinton.com/calls/phonebank/phonebankId
+*/
+HillaryClintonPage.prototype.call = function() {
+    this.ev.action = 'call';
+    this.ev.contact = null;
+    var self = this;
+    // caller info loads after page
+    var loaded = setInterval(function() {
+        // clicked no contact; now showing survey
+        if (typeof self.ev.contact !== null && $('.canvass-option').length) {
+            clearInterval(loaded);
+            return;
+        }
+        if (!$('button.js_no-contact').length || !$('button.js_finish-call').length) {
+            return;
+        }
+        clearInterval(loaded);
+        $('button.js_no-contact')[0].addEventListener('click', function() {
+            self.ev.contact = false;
+            self.send();
+            self.call(); // re-do event handlers call when component refreshes
+        });
+        $('button.js_finish-call')[0].addEventListener('click', function() {
+            // skip if already clicked no contact
+            if (self.ev.contact === null) {
+                self.ev.contact = true;
+                self.send();
+            }
+            self.ev.contact = null;
+            self.call();  // re-do event handlers when call component refreshes
+        });
+    }, 500);
+};
+
 var page = new HillaryClintonPage(document.location.href);
 page.log();

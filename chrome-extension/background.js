@@ -62,12 +62,3 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     }
 });
 
-chrome.webRequest.onSendHeaders.addListener(
-    function(details) {
-        // can get the userId from the end of the URL, but can't see the response
-        console.log('onSendHeaders ', details);
-    },
-    {
-        urls: ["https://www.hillaryclinton.com/api/the-claw/profiles/*"]
-    }
-);
