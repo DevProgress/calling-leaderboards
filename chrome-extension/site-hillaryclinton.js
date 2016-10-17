@@ -1,34 +1,32 @@
 /*
-    TODO:
-    want to intercept XHR request to URL like https://www.hillaryclinton.com/api/the-claw/profiles/userid_here
-    but putting a breakpoint here shows that this runs after the request has already been made
+    intercept the response for XHR requests; ignore all but the user profile call
+    save user name and id to the DOM so that content script can get at it
+    thanks to http://stackoverflow.com/questions/9515704/building-a-chrome-extension-inject-code-in-a-page-using-a-content-script/9517879
 */
 var interceptXHR = '(' + function() {
-    // intercept XHR
     var XHR = XMLHttpRequest.prototype;
-    // Remember references to original methods
     var open = XHR.open;
     var send = XHR.send;
 
-    // Overwrite native methods
-    // Collect data
     XHR.open = function(method, url) {
         this._method = method;
         this._url = url;
-        console.log('XHR.open: url=', url)
         return open.apply(this, arguments);
     };
 
-    // Implement "ajaxSuccess" functionality
     XHR.send = function(postData) {
-        console.log('XHR.send post=', postData);
         this.addEventListener('load', function() {
-            //console.log('XHR.send url='+this._url+' load body=', this.responseText);
-            console.log('XHR.send onLoad url='+this._url);
-            /* Method        */ this._method
-            /* URL           */ this._url
-            /* Response body */ this.responseText
-            /* Request body  */ postData
+            if (this._url.indexOf('/api/the-claw/profiles/') !== 0) {
+                return;
+            }
+            var data = JSON.parse(this.responseText);
+            // save to hillaryclinton.com/calls page DOM
+            var user = document.createElement('span');
+            user.setAttribute('id', 'leaderboardUser');
+            user.setAttribute('data-id', data.profile.gwid);
+            user.setAttribute('data-name', data.profile.givenName+' '+data.profile.familyName);
+            user.setAttribute('data-zip', data.profile.zipCode);
+            document.body.appendChild(user);
         });
         return send.apply(this, arguments);
     };
@@ -40,20 +38,33 @@ script.textContent = interceptXHR;
 script.remove();
 
 /*
-    create votebuilder page:
+    create page:
     - set source to hillaryclinton/calls
     - get user and context info
 */
 function HillaryClintonPage(url) {
     this.url = url;
     this.ev = { source: 'hillaryclinton/calls', phonebank: {} };
-
-    // TODO: get user metadata
+    // get user info
+    var user = $('#leaderboardUser');
+    this.ev.user = {
+        username: $(user).attr('data-id'),
+        name: $(user).attr('data-name'),
+        zip: $(user).attr('zip')
+    }
+    // get the phonebank from localStorage
+    this.ev.phonebank = {
+        id: localStorage.getItem('phonebankId'),
+        name: localStorage.getItem('phonebankName')
+    }
 }
 
 HillaryClintonPage.prototype.log = function() {
     // TODO: write data to keen
+    console.log('page: user id='+$(user).attr('data-id')+' name='+$(user).attr('data-name'));
+    this.sendContext();
 };
+
 
 /*
 select phonebank: https://www.hillaryclinton.com/calls/phonebank/

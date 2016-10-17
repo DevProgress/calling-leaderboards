@@ -35,7 +35,8 @@
                 "keen-write.js",
                 "site-hillaryclinton.js"
             ],
-            "all_frames": true
+            "all_frames": true,
+            "run_at": "document_start"
         }
     ],
     "permissions": [
