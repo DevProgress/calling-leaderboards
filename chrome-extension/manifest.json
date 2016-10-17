@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "DevProgress Leaderboard",
-    "version": "0.5",
+    "version": "0.6",
     "description": "Logs calling activities to DevProgress leaderboard",
     "icons": {
         "128": "dev_progress128.png"
@@ -24,9 +24,23 @@
                 "site-votebuilder.js"
             ],
             "all_frames": true
+        },
+        {
+            "matches": [
+                "https://www.hillaryclinton.com/*"
+            ],
+            "js": [
+                "bower_components/keen-js/dist/keen-tracker.min.js",
+                "bower_components/jquery-1.11.1/dist/jquery.min.js",
+                "keen-write.js",
+                "site-hillaryclinton.js"
+            ],
+            "all_frames": true
         }
     ],
     "permissions": [
+        "webRequest",
+        "https://www.hillaryclinton.com/calls/*",
         "https://www.votebuilder.com/*",
         "https://www.nevadavan.com/*"
     ],
