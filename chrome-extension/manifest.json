@@ -27,7 +27,7 @@
         },
         {
             "matches": [
-                "https://www.hillaryclinton.com/*"
+                "https://www.hillaryclinton.com/calls/*"
             ],
             "js": [
                 "site-hillaryclinton-profile.js"
@@ -37,7 +37,7 @@
         },
         {
             "matches": [
-                "https://www.hillaryclinton.com/*"
+                "https://www.hillaryclinton.com/calls/*"
             ],
             "js": [
                 "bower_components/keen-js/dist/keen-tracker.min.js",
