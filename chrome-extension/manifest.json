@@ -49,7 +49,6 @@
         }
     ],
     "permissions": [
-        "webRequest",
         "https://www.hillaryclinton.com/calls/*",
         "https://www.votebuilder.com/*",
         "https://www.nevadavan.com/*"
