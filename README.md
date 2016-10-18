@@ -68,11 +68,11 @@ In Chrome, go to chrome://extensions
 
 Make sure Developer mode checkbox is checked
 
-Click Load unpacked extensions
+Click Load unpacked extensionsz
 
 Select the chrome-extension directory under this one
 
-Optional but useful: install [https://chrome.google.com/webstore/detail/keen-debugger/jaanimjmcilehhddhdalaplgkebjbmfj?hl=en](Keen Debugger extension)
+Optional but useful: install [Keen Debugger extension](https://chrome.google.com/webstore/detail/keen-debugger/jaanimjmcilehhddhdalaplgkebjbmfj?hl=en)
 
 ### developer setup
 

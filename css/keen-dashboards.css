@@ -120,3 +120,7 @@ body.application .return-link:hover,
 text[aria-hidden] {
   display: none;
 }
+
+text {
+  fill: #000;
+}
