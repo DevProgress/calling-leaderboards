@@ -53,6 +53,7 @@ HillaryClintonPage.prototype.checkin = function() {
     this.ev.action = 'checkin';
     var self = this;
     // phonebank loads after page
+    console.log('checkin');
     var loaded = setInterval(function() {
         if (!$('a.phonebank-link').length) {
             return;
@@ -61,49 +62,73 @@ HillaryClintonPage.prototype.checkin = function() {
         $('a.phonebank-link').on('click', function() {
             var id = $(this).attr('href').replace('/calls/phonebank/', '');
             var name = $(this).closest('.row').find('h2').text();
-            console.log('click phonebank id='+id+' name='+name);
             // save phonebank to localStorage
             localStorage.setItem('phonebankId', id);
             localStorage.setItem('phonebankName', name);
             // send checkin
             self.send();
+            // call page loads in place
+            self.call();
         });
     }, 500);
 };
 
+HillaryClintonPage.prototype.callNoContact = function() {
+    console.log('call: click could not reach');
+    this.ev.contact = false;
+    this.send();
+    $('button.js_finish-call').off('click.leaderboard');
+    // new finish button added to the DOM
+    // need to click finish to go to next call
+    // but don't send a call with contact event
+    var loaded = setInterval(function() {
+        var finishButton = $('button.js_finish-call');
+        if (finishButton.length < 2) {
+            // not ready yet; try again
+            return;
+        }
+        if (loaded) {
+            clearInterval(loaded);
+        }
+        finishButton.one('click.leaderboard', function() {
+            console.log('clicked finish after no contact');
+            this.call();
+        }.bind(this));
+    }.bind(this), 500);
+};
+
+HillaryClintonPage.prototype.callWithContact = function() {
+    console.log('call: click finish');
+    this.ev.contact = true;
+    this.send();
+    this.call();
+};
+
 /*
-    call: https://www.hillaryclinton.com/calls/phonebank/phonebankId
+    new call:
+    - remove click listeners
+    - wait for buttons
+    - add click listeners
 */
 HillaryClintonPage.prototype.call = function() {
+    console.log('newCall');
     this.ev.action = 'call';
-    this.ev.contact = null;
-    var self = this;
-    // caller info loads after page
+    // wait for buttons to load
     var loaded = setInterval(function() {
-        // clicked no contact; now showing survey
-        if (typeof self.ev.contact !== null && $('.canvass-option').length) {
+        var noContactButton = $('button.js_no-contact');
+        var finishButton = $('button.js_finish-call');
+        if (!noContactButton.length || !finishButton.length) {
+            // not ready yet; try again
+            return;
+        }
+        if (loaded) {
             clearInterval(loaded);
-            return;
         }
-        if (!$('button.js_no-contact').length || !$('button.js_finish-call').length) {
-            return;
-        }
-        clearInterval(loaded);
-        $('button.js_no-contact')[0].addEventListener('click', function() {
-            self.ev.contact = false;
-            self.send();
-            self.call(); // re-do event handlers call when component refreshes
-        });
-        $('button.js_finish-call')[0].addEventListener('click', function() {
-            // skip if already clicked no contact
-            if (self.ev.contact === null) {
-                self.ev.contact = true;
-                self.send();
-            }
-            self.ev.contact = null;
-            self.call();  // re-do event handlers when call component refreshes
-        });
-    }, 500);
+        console.log('call: found buttons');
+        var click = 'click.leaderboard';
+        noContactButton.off(click).on(click, this.callNoContact.bind(this));
+        finishButton.off(click).on(click, this.callWithContact.bind(this));
+    }.bind(this), 500);
 };
 
 var page = new HillaryClintonPage(document.location.href);
