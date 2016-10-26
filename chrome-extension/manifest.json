@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "DevProgress Leaderboard",
-    "version": "0.6",
+    "version": "0.7",
     "description": "Logs calling activities to DevProgress leaderboard",
     "icons": {
         "128": "dev_progress128.png"
