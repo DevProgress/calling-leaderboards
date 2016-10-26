@@ -7,12 +7,13 @@ function VoteBuilderPage(url) {
     this.url = url;
     this.ev = { source: 'VoteBuilder', phonebank: {} };
 
-    // get user info
-    this.ev.user = {
-        username: $('#action-bar-dropdown-van-name').text().trim(),
-        name: $('#action-bar-dropdown-username').text().trim()
-    };
-
+    var localName = localStorage.getItem('userName');
+    if (localName) {
+        this.setUser(localName);
+    } else {
+        // get user info from page
+        this.setUser($('#action-bar-dropdown-van-name').text().trim(), $('#action-bar-dropdown-username').text().trim());
+    }
     // get state and committee info from the script tag that sets up Angular
     var ctx = null;
     $('script').each(function() {
@@ -32,6 +33,13 @@ function VoteBuilderPage(url) {
         };
     }
 }
+
+VoteBuilderPage.prototype.setUser = function(username, name) {
+    this.ev.user = {
+        username: username,
+        name: name || username
+    };
+};
 
 VoteBuilderPage.prototype.log = function() {
     this.savePhonebank();
@@ -164,6 +172,27 @@ VoteBuilderPage.prototype.predictiveCheckin = function() {
     var submitButton = $('input[type="submit"]')[0];
     submitButton.addEventListener('click', function() {
         this.send();
+    }.bind(this));
+    // add content box to collect user name
+    var name = localStorage.getItem('userName');
+    name = name ? name.replace(/"/g, '&quot;') : $('#action-bar-dropdown-van-name').text().trim();
+    var collectUsername = '<div id="predictiveUsername">'+
+        '<div class="header">Thanks for making calls today. '+
+        'Fill in your name to compare your calling progress with others on a leaderboard.</div>'+
+        '<div><input type="text" size="25" placeholder="Firstname Lastname" name="username" id="predictiveUsernameName" value="'+name+'">'+
+        '<input type="button" value="Save" id="predictiveUsernameSubmit"></div>'+
+        '<div>To check your progress, just click the <img src="https://devprogress.us/calling-leaderboards/chrome-extension/dev_progress19.png"> button in the toolbar above.</div>'+
+        '</div>';
+    $('body').append(collectUsername);
+    $('#predictiveUsername').slideDown();
+    localStorage.setItem('userName', '');
+    $('#predictiveUsernameSubmit').on('click', function() {
+        var name = $('#predictiveUsernameName').val();
+        console.log('user=', name);
+        localStorage.setItem('userName', name);
+        this.setUser(name);
+        this.sendContext();
+        $('#predictiveUsername').slideUp();
     }.bind(this));
 };
 

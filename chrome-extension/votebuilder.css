@@ -1,0 +1,25 @@
+#predictiveUsername {
+    position: fixed;
+    top: 0;
+    right: 0px;
+    display: none;
+    background-color: #fff;
+    padding: 15px;
+    z-index: 2000;
+    border: 1px solid #999;
+    max-width: 400px;
+}
+
+.header {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#predictiveUsernameName {
+    max-width: 70%;
+    margin-right: 5px;
+}
+
+#predictiveUsername input {
+    display: inline-block;
+}

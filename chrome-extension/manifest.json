@@ -17,6 +17,9 @@
                 "https://www.votebuilder.com/*",
                 "https://www.nevadavan.com/*"
             ],
+            "css": [
+                "votebuilder.css"
+            ],
             "js": [
                 "bower_components/keen-js/dist/keen-tracker.min.js",
                 "bower_components/jquery-1.11.1/dist/jquery.min.js",
